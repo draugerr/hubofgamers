@@ -31,8 +31,8 @@ function isLoggedIn(){
 	
 	//if(isset($_COOKIE['loggedInToken']))
 	//{
-		//$loggedInToken = htmlspecialchars($_COOKIE['loggedInToken']);
-		$tokenExists = mysqli_query(getDBConnection(), 'SELECT * FROM hog_dev.gamer t WHERE t.loggedin_token = 502'); //$loggedInToken');
+		$loggedInToken = 'b5b41fac0361d157d9673ecb926af5ae'; //htmlspecialchars($_COOKIE['loggedInToken']); //token is stored in md5
+		$tokenExists = mysqli_query(getDBConnection(), 'SELECT * FROM hog_dev.gamer t WHERE t.loggedin_token = $loggedInToken');
 		if($tokenExists)
 		{ 
 			$row = mysqli_fetch_assoc($tokenExists);
