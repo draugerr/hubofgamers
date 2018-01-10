@@ -25,47 +25,76 @@ function translate($lang, $text_key) {
 	echo $text_key;
 }
 
-function isLoggedIn(){
+function confirmLogin($email,$password)
+{
+	$md5pass = md5($password);
 	
-	
-	
-	//if(isset($_COOKIE['loggedInToken']))
-	//{
-		$loggedInToken = 'b5b41fac0361d157d9673ecb926af5ae'; //htmlspecialchars($_COOKIE['loggedInToken']); //token is stored in md5
-		$tokenExists = mysqli_query(getDBConnection(), 'SELECT * FROM hog_dev.gamer t WHERE t.loggedin_token = $loggedInToken');
-		if($tokenExists)
-		{ 
-			$row = mysqli_fetch_assoc($tokenExists);
-			echo $row['profile_name']; 
-			return $loggedin= 'T';
-		}
-		else
-		{
-			echo 'FALSE';
-			return $loggedin = 'F';
-		}
-		mysqli_free_result($tokenExists);
+	$isLoggedIn = mysqli_query(getDBConnection(), 'SELECT * FROM hog_dev.gamer t WHERE t.email = $email and t.password = $password');
+	if($isLoggedIn)
+	{ 
+		$row = mysqli_fetch_assoc($isLoggedIn);
+		echo $row['name']; 
+		mysqli_free_result($isLoggedIn);
 		closeDBConnection();
-	//}
-}
-
-function rememberMeUser(){
-	if(isset($_COOKIE['rememberMeUser']))
+		return true;
+	}
+	else
 	{
-		$rememberMeUser = htmlspecialchars($_COOKIE['rememberMeUser']);
-		if($rememberMeExists)
-		{
-			return $rememberMeUser;
-		}
-		else
-		{
-			return $rememberMeUser = false;
-		}
+		mysqli_free_result($isLoggedIn);
+		closeDBConnection();
+		echo 'FALSE';
+		return false;
 	}
 }
 
-function logout(){
-	;//ToDo: fill in
+function createSessions($username,$password)
+{
+	//Add additional member to Session array as per requirement
+	session_register();
+
+	$_SESSION["hogemail"] = $username;
+	$_SESSION["hogpassword"] = md5($password);
+
+	setcookie("hogemail", $_SESSION['hogemail'], time()+60*60*24*100, "/");
+	if(isset($_POST['rememberMe']))
+	{
+		//Add additional member to cookie array as per requirement
+		setcookie("hogpassword", $_SESSION['hogpassword'], time()+60*60*24*100, "/");
+		return;
+	}
+}
+
+function clearSessionsCookies()
+{
+	unset($_SESSION['hogemail']);
+	unset($_SESSION['hogpassword']);
+	 
+	session_unset();
+	session_destroy();
+
+	setcookie("hogemail", "",time()-60*60*24*100, "/");
+	setcookie("hogpassword", "",time()-60*60*24*100, "/");
+}
+
+function checkLoggedIn()
+{
+	if(isset($_SESSION['hogemail']) AND isset($_SESSION['hogpassword']))
+		return true;
+		elseif(isset($_COOKIE['hogemail']) && isset($_COOKIE['hogpassword']))
+		{
+			if(confirmLogin($_COOKIE['hogemail'],$_COOKIE['hogpassword']))
+			{
+				createsSessions($_COOKIE['hogemail'],$_COOKIE['hogpassword']);
+				return true;
+			}
+			else
+			{
+				clearSessionsCookies();
+				return false;
+			}
+		}
+		else
+			return false;
 }
 
 

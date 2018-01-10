@@ -9,7 +9,7 @@
 
 <?php
 
-if (!isLoggedIn()) { //ToDo: correct isLoggedIn and remove ! (not)
+if (!checkLoggedIn()) { //ToDo: correct isLoggedIn and remove ! (not)
 	header("Location: index.php");
 	exit();
 }

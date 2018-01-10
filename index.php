@@ -20,7 +20,11 @@
   </nav>
   <section>
     <?php translate($lang, ' deneme' . $ifclause)?>
-    <?php isLoggedIn()?>
+    <?php if (checkLoggedIn()) 
+    echo "<H1>You are already logged in - <A href = \"login.php?do=logout\">logout</A></h1>"; 
+else 
+    echo "<H1>You are not logged in - <A href = \"login.php\">login</A></h1></h1>"; 
+?>
   </section>
   <aside>
     ADVERTISEMENT
